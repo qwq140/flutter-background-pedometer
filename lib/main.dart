@@ -1,7 +1,42 @@
-import 'package:flutter/material.dart';
+import 'dart:ui';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:steps_counting_app/config/back_service.dart';
+import 'package:steps_counting_app/config/notification_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  bool isGranted = await requestPermissions();
+  if(isGranted) {
+    NotificationService notificationService = NotificationService();
+    await notificationService.init();
+    await initializeService();
+  }
+
   runApp(const MyApp());
+}
+
+Future<bool> requestPermissions() async {
+  // 알림 권한 요청 (Android 13 이상)
+  if (await Permission.notification.isDenied) {
+    final result = await Permission.notification.request();
+    if (result != PermissionStatus.granted) {
+      return false; // 권한 거부
+    }
+  }
+
+  // 배터리 최적화 무시 권한 요청 (선택)
+  if (await Permission.ignoreBatteryOptimizations.isDenied) {
+    final result = await Permission.ignoreBatteryOptimizations.request();
+    if (result != PermissionStatus.granted) {
+      return false; // 권한 거부
+    }
+  }
+
+  return true; // 모든 권한 허용됨
 }
 
 class MyApp extends StatelessWidget {
@@ -58,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+    NotificationService().showNotification();
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

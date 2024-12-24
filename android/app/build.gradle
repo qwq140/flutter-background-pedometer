@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.pjb.steps_counting_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -38,6 +38,8 @@ android {
         }
     }
 }
+
+dependencies {}
 
 flutter {
     source = "../.."
