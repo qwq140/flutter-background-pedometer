@@ -1,11 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:steps_counting_app/config/back_service.dart';
-import 'package:steps_counting_app/config/notification_service.dart';
+import 'package:steps_counting_app/service/back_service.dart';
+import 'package:steps_counting_app/service/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +29,13 @@ Future<bool> requestPermissions() async {
     final result = await Permission.ignoreBatteryOptimizations.request();
     if (result != PermissionStatus.granted) {
       return false; // 권한 거부
+    }
+  }
+
+  if (await Permission.activityRecognition.isDenied) {
+    final result = await Permission.activityRecognition.request();
+    if(result != PermissionStatus.granted) {
+      return false;
     }
   }
 
@@ -93,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    NotificationService().showNotification();
+    NotificationService().showNotification(title: '테스트', content: '테스트');
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

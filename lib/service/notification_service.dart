@@ -30,7 +30,7 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  Future<void> showNotification() async {
+  Future<void> showNotification({required String title, required String content}) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       notificationChannelId,
@@ -39,7 +39,7 @@ class NotificationService {
       icon: 'ic_bg_service_small',
       importance: Importance.low,
       ongoing: true,
-
+      autoCancel: false,
     );
 
     const NotificationDetails notificationDetails =
@@ -47,8 +47,8 @@ class NotificationService {
 
     flutterLocalNotificationsPlugin.show(
       notificationId,
-      'Service',
-      'background에서 실행한 알림',
+      title,
+      content,
       notificationDetails,
     );
   }
